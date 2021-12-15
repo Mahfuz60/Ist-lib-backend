@@ -61,24 +61,24 @@ async function run() {
 
    
 
-    // // add users
-    // app.post("/users", async (req, res) => {
-    //   const user = req.body;
-    //   const result = await userCollection.insertOne(user);
-    //   res.json(result);
-    // });
+    // add users
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.json(result);
+    });
 
     // set users
-    // app.put("/users", async (req, res) => {
-    //   const user = req.body;
-    //   const filter = { email: user.email };
-    //   const options = { upsert: true };
-    //   const updateDoc = {
-    //     $set: user,
-    //   };
-    //   const result = await userCollection.updateOne(filter, updateDoc, options);
-    //   res.json(result);
-    // });
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.json(result);
+    });
 
     // update user role (admin)
     // app.put("/users/admin", async (req, res) => {
