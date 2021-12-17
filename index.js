@@ -23,7 +23,14 @@ async function run() {
 
     const database = client.db("IST_Library");
     const bookCollection = database.collection("books");
-    // const userCollection = database.collection("users");
+    const userCollection = database.collection("users");
+
+    // add books
+    app.post("/books", async (req, res) => {
+      const books = req.body;
+      const result = await bookCollection.insertOne(books);
+      res.json(result);
+    });
 
     // get all items from collection
     app.get("/allBooks", async (req, res) => {
@@ -32,34 +39,33 @@ async function run() {
 
       res.send(items);
     });
-    // add books
-    app.post("/books", async (req, res) => {
-      const books = req.body;
-      const result = await bookCollection.insertOne(books);
-      res.json(result);
-    });
-    // delete book-item
-    app.delete("/allBooks/:id", async (req, res) => {
+    // get single books
+    app.get("/books/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const result = await bookCollection.deleteOne(query);
-      res.send(result);
+      const event = await bookCollection.findOne(query);
+      res.json(event);
+    });
+    // get single book item
+    app.get("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const event = await bookCollection.findOne(query);
+      res.json(event);
     });
 
     // get users by email
-    // app.get("/users/:email", async (req, res) => {
-    //   const email = req.params.email;
-    //   const query = { email: email };
-    //   const user = await userCollection.findOne(query);
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
 
-    //   let isAdmin = false;
-    //   if (user?.role === "admin") {
-    //     isAdmin = true;
-    //   }
-    //   res.json({ admin: isAdmin });
-    // });
-
-   
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
+    });
 
     // add users
     app.post("/users", async (req, res) => {
@@ -81,17 +87,24 @@ async function run() {
     });
 
     // update user role (admin)
-    // app.put("/users/admin", async (req, res) => {
-    //   const user = req.body;
-    //   const filter = { email: user.email };
-    //   const updateDoc = {
-    //     $set: {
-    //       role: "admin",
-    //     },
-    //   };
-    //   const result = await userCollection.updateOne(filter, updateDoc);
-    //   res.json(result);
-    // });
+    app.put("/users/admin", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const updateDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.json(result);
+    });
+    // delete book-item
+    app.delete("/allBooks/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await bookCollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
     //   await client.close();
   }
