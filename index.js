@@ -28,17 +28,17 @@ async function run() {
     // add books
     app.post("/books", async (req, res) => {
       const books = req.body;
+      console.log(books);
       const result = await bookCollection.insertOne(books);
       res.json(result);
     });
-
-    // get all items from collection
-    app.get("/allBooks", async (req, res) => {
+    // get fixed items from collection
+    app.get("/books", async (req, res) => {
       const cursor = bookCollection.find({});
-      const items = await cursor.toArray();
-
+      const items = await cursor.limit(6).toArray();
       res.send(items);
     });
+
     // get single books
     app.get("/books/:id", async (req, res) => {
       const id = req.params.id;
@@ -52,6 +52,13 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const event = await bookCollection.findOne(query);
       res.json(event);
+    });
+    // get all items from collection
+    app.get("/allBooks", async (req, res) => {
+      const cursor = bookCollection.find({});
+      const items = await cursor.toArray();
+
+      res.send(items);
     });
 
     // get users by email
